@@ -21,11 +21,13 @@ mybatis-fast-publish是整合mybatis与spring boot的轻量级快速发布接口
 
     以上链接在BaseFastPublicController中定义。
     
->- ```/fast-public/test```:传递参数与动态sql片段（特殊字符需要转义），测试相关sql（POST请求,参数为json格式）;
->- ```/fast-public/test```:参数没有嵌套的使用这个GET请求，传递参数与动态sql片段（特殊字符需要转义），测试相关sql;
->- ```/fast-public/execute```:传递参数与表```sql_fragment```中code字段，执行相关sql（POST请求,参数为json格式）;
->- ```/fast-public/execute```:参数没有嵌套的使用这个GET请求，传递参数与表```sql_fragment```中code字段，执行相关sql;
+>- ```/fast-public/test```:传递参数与动态sql片段（特殊字符需要转义），测试相关sql（POST请求,参数为json格式）,适用于查询语句;
+>- ```/fast-public/test```:参数没有嵌套的使用这个GET请求，传递参数与动态sql片段（特殊字符需要转义），测试相关sql,适用于查询语句;
+>- ```/fast-public/execute```:传递参数与表```sql_fragment```中code字段，执行相关sql（POST请求,参数为json格式）,适用于查询语句;
+>- ```/fast-public/execute```:参数没有嵌套的使用这个GET请求，传递参数与表```sql_fragment```中code字段，执行相关sql,适用于查询语句;
 >- ```/fast-public/delete```:删除表```sql_fragment```相关数据;
->- ```/fast-public/update```:更新表```sql_fragment```相关数据。  
+>- ```/fast-public/update```:更新表```sql_fragment```相关数据;
+>- ```/fast-public/execute/ret-num```: 传递参数与表```sql_fragment```中code字段，执行相关sql（POST请求,参数为json格式）,适用于增删改语句;
+>- ```/fast-public/execute/ret-num```: 参数没有嵌套的使用这个GET请求，传递参数与表```sql_fragment```中code字段，执行相关sql,适用于增删改语句;
 
     以上链接在FastPublicController中定义。
