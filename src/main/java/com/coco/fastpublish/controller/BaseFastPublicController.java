@@ -21,7 +21,13 @@ public class BaseFastPublicController {
     @RequestMapping("/fragment/add")
     @ResponseBody
     public Map create(SqlFragment fragment){
+        SqlFragment frag = sqlFragmentService.getByCode(fragment.getCode());
         Map map = new HashMap();
+        if (frag == null) {
+            map.put("success", false);
+            map.put("msg", "code以被使用");
+            return map;
+        }
         map.put("success", sqlFragmentService.createRetBool(fragment));
         map.put("msg", "");
         return map;
