@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coco.fastpublish.mapper.SqlFragmentMapper">
+
+    <insert id="insert" parameterType="com.coco.fastpublish.entity.SqlFragment">
+        insert into sql_fragment
+        <trim prefix=' (' suffix=') ' suffixOverrides=','>
+            <if test="fragment.id != null and fragment.id != ''">id,</if>
+            <if test="fragment.name != null and fragment.name != ''">name,</if>
+            <if test="fragment.code != null and fragment.code != ''">code,</if>
+            <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc,</if>
+            <if test="fragment.fragment != null and fragment.fragment != ''">fragment,</if>
+        </trim>
+        <trim prefix=' values(' suffix=') ' suffixOverrides=','>
+            <if test="fragment.id != null and fragment.id != ''">#{fragment.id},</if>
+            <if test="fragment.name != null and fragment.name != ''">#{fragment.name},</if>
+            <if test="fragment.code != null and fragment.code != ''">#{fragment.code},</if>
+            <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">#{fragment.sqlDesc},</if>
+            <if test="fragment.fragment != null and fragment.fragment != ''">#{fragment.fragment},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.coco.fastpublish.entity.SqlFragment">
+        update sql_fragment
+        <trim prefix=" set " suffix="" suffixOverrides=",">
+            <if test="fragment.name != null and fragment.name != ''">name=#{fragment.name},</if>
+            <if test="fragment.code != null and fragment.code != ''">code=#{fragment.code},</if>
+            <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc=#{fragment.sqlDesc},</if>
+            <if test="fragment.fragment != null and fragment.fragment != ''">fragment=#{fragment.fragment},</if>
+        </trim>
+        where id = #{fragment.id}
+    </update>
+
+    <update id="updateByCode" parameterType="com.coco.fastpublish.entity.SqlFragment">
+        update sql_fragment
+        <trim prefix=" set " suffix="" suffixOverrides=",">
+            <if test="fragment.id != null and fragment.id != ''"> and id=#{fragment.id}</if>
+            <if test="fragment.name != null and fragment.name != ''">name=#{fragment.name},</if>
+            <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc=#{fragment.sqlDesc},</if>
+            <if test="fragment.fragment != null and fragment.fragment != ''">fragment=#{fragment.fragment},</if>
+        </trim>
+        where code = #{fragment.code}
+    </update>
+
+    <delete id="delete" parameterType="com.coco.fastpublish.entity.SqlFragment">
+        delete from sql_fragment
+        <where>
+            <if test="fragment.id != null and fragment.id != ''"> and id=#{fragment.id}</if>
+            <if test="fragment.name != null and fragment.name != ''"> and name=#{fragment.name}</if>
+            <if test="fragment.code != null and fragment.code != ''"> and code=#{fragment.code}</if>
+            <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''"> and sql_desc=#{fragment.sqlDesc}</if>
+            <if test="fragment.fragment != null and fragment.fragment != ''"> and fragment=#{fragment.fragment}</if>
+        </where>
+    </delete>
+
+    <select id="list" resultType="com.coco.fastpublish.entity.SqlFragment">
+        select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment
+    </select>
+
+    <select id="listByPage" parameterType="map" resultType="com.coco.fastpublish.entity.SqlFragment">
+        <if test="driverType != null and driverType == 'mysql'">
+            select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment limit #{start},#{pageSize}
+        </if>
+        <if test="driverType != null and driverType == 'oracle'">
+            select id,name,code,sqlDesc,fragment from (
+            select ROWNUM as romNo,id,name,code,sql_desc as sqlDesc,fragment from sql_fragment where ROWNUM &lt;= (#{start}/#{pageSize}+1)*#{pageSize}
+            ) t where t.romNo>= #{start}+1
+        </if>
+    </select>
+
+</mapper>
