@@ -1,7 +1,7 @@
 package com.coco.fastpublish.config;
 
-import com.coco.fastpublish.controller.BaseFastPublicController;
-import com.coco.fastpublish.controller.FastPublicController;
+import com.coco.fastpublish.controller.BaseFastPublishController;
+import com.coco.fastpublish.controller.FastPublishController;
 import com.coco.fastpublish.service.SqlExecuter;
 import com.coco.fastpublish.service.SqlFragmentProducer;
 import com.coco.fastpublish.service.SqlFragmentService;
@@ -48,9 +48,9 @@ public class MapperScannerConf extends MapperScannerConfigurer {
 
     @Bean
     @ConditionalOnBean({SqlExecuter.class})
-    @ConditionalOnMissingBean({FastPublicController.class})
-    public FastPublicController fastPublicController(){
-        return new FastPublicController();
+    @ConditionalOnMissingBean({FastPublishController.class})
+    public FastPublishController fastPublicController(){
+        return new FastPublishController();
     }
 
     @Bean
@@ -62,9 +62,9 @@ public class MapperScannerConf extends MapperScannerConfigurer {
 
     @Bean
     @ConditionalOnBean({SqlExecuter.class})
-    @ConditionalOnMissingBean({BaseFastPublicController.class})
-    public BaseFastPublicController baseFastPublicController(){
-        return new BaseFastPublicController();
+    @ConditionalOnMissingBean({BaseFastPublishController.class})
+    public BaseFastPublishController baseFastPublicController(){
+        return new BaseFastPublishController();
     }
 
 }

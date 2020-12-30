@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class BaseFastPublicController {
+public class BaseFastPublishController {
 
     @Autowired
     private SqlFragmentService sqlFragmentService;
