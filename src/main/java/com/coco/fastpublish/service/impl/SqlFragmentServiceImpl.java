@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.coco.fastpublish.config.FastPublishProperty;
 import com.coco.fastpublish.entity.SqlFragment;
 import com.coco.fastpublish.mapper.SqlFragmentMapper;
+import com.coco.fastpublish.service.SqlExecuter;
 import com.coco.fastpublish.service.SqlFragmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +17,9 @@ public class SqlFragmentServiceImpl implements SqlFragmentService {
 
     @Autowired
     private FastPublishProperty fastPublishProperty;
+
+    @Autowired
+    private SqlExecuter sqlExecuter;
 
     @Override
     public int create(SqlFragment fragment) {
@@ -31,7 +35,11 @@ public class SqlFragmentServiceImpl implements SqlFragmentService {
 
     @Override
     public int updateById(SqlFragment fragment) {
-        return sqlFragmentMapper.updateById(fragment);
+        int flag = sqlFragmentMapper.updateById(fragment);
+        if (flag > 0) {
+            sqlExecuter.updateSqlFragment(fragment.getCode());
+        }
+        return flag;
     }
 
     @Override
@@ -41,22 +49,30 @@ public class SqlFragmentServiceImpl implements SqlFragmentService {
 
     @Override
     public int updateByCode(SqlFragment fragment) {
-        return sqlFragmentMapper.updateByCode(fragment);
+        int flag = sqlFragmentMapper.updateByCode(fragment);
+        if (flag > 0) {
+            sqlExecuter.updateSqlFragment(fragment.getCode());
+        }
+        return flag;
     }
 
     @Override
     public boolean updateByCodeRetBool(SqlFragment fragment) {
-        return sqlFragmentMapper.updateByCode(fragment)>0;
+        return sqlFragmentMapper.updateByCode(fragment) > 0;
     }
 
     @Override
     public int delete(SqlFragment fragment) {
-        return sqlFragmentMapper.delete(fragment);
+        int flag = sqlFragmentMapper.delete(fragment);
+        if (flag > 0) {
+            sqlExecuter.deleteSqlFragment(fragment.getCode());
+        }
+        return flag;
     }
 
     @Override
     public boolean deleteRetBool(SqlFragment fragment) {
-        return sqlFragmentMapper.delete(fragment)>0;
+        return sqlFragmentMapper.delete(fragment) > 0;
     }
 
     @Override
