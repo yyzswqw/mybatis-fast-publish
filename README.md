@@ -16,7 +16,7 @@ mybatis-fast-publish是整合mybatis与spring boot的轻量级快速发布接口
        return new DBSqlFragmentProducer();
    }
 ```
-默认情况下，sql提供器为：```DefaultSqlFragmentProducer```,存储引擎为```mysql```,若为```oracle```时，需配置```fastpublish.datasource.driver-type```为```oracle```。
+默认情况下，sql提供器为：```DefaultSqlFragmentProducer```,存储引擎为```mysql```,若为```oracle```时，需配置```fastpublish.datasource.driver-type```为```oracle```。  
 4. 启动spring boot项目。访问以下链接：
 >- ```/fragment/add```:添加动态sql到表```sql_fragment```;
 >- ```/fragment/update-by-id```:通过主键id修改表```sql_fragment```;
