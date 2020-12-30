@@ -1,9 +1,9 @@
 #  mybatis-fast-publish
 mybatis-fast-publish是整合mybatis与spring boot的轻量级快速发布接口工具。  
-大部分分析需求只是需要写好SQL即可，该工具可以在配置好SQL后，调用相关接口即可返回结果，不需要在程序中另外再写控制层、服务层以及数据访问层。
+大部分分析需求只是需要写好SQL即可，该工具可以在配置好 **动态SQL** (mybatis动态SQL)后，调用相关接口即可返回结果，不需要在程序中另外再写控制层、服务层以及数据访问层。
 
 ##  主要功能
-- **快速发布**：预先存储SQL，支持mybatis动态SQL,通过接口传递参数与要执行的SQL,即可返回结果。  
+- **快速发布**：预先存储SQL，支持mybatis **动态SQL** ,通过接口传递参数与要执行的SQL或者code,即可返回结果。  
 ##  如何构建
 - mybatis-fast-publish使用 Maven 来构建,确保安装了 Maven ，将源码下载、执行命令：```mvn install```安装到本地，即可在其他项目中引入依赖。  
 ##  如何使用
@@ -36,6 +36,6 @@ mybatis-fast-publish是整合mybatis与spring boot的轻量级快速发布接口
 >- ```/fast-publish/delete```:删除缓存相关数据;
 >- ```/fast-publish/update```:删除缓存相关数据;
 >- ```/fast-publish/execute/ret-num```: 传递参数与表```sql_fragment```中code字段，执行相关sql（POST请求,参数为json格式）,适用于增删改语句;
->- ```/fast-publish/execute/ret-num```: 参数没有嵌套的使用这个GET请求，传递参数与表```sql_fragment```中code字段，执行相关sql,适用于增删改语句;
+>- ```/fast-publish/execute/ret-num```: 参数没有嵌套的使用这个GET请求，传递参数与表```sql_fragment```中code字段，执行相关sql,适用于增删改语句。
 
     以上链接在FastPublishController中定义。
