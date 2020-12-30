@@ -23,7 +23,7 @@ public class BaseFastPublishController {
     public Map create(SqlFragment fragment){
         SqlFragment frag = sqlFragmentService.getByCode(fragment.getCode());
         Map map = new HashMap();
-        if (frag == null) {
+        if (frag != null) {
             map.put("success", false);
             map.put("msg", "code以被使用");
             return map;
@@ -49,8 +49,13 @@ public class BaseFastPublishController {
 
     @RequestMapping("/fragment/update-by-code")
     @ResponseBody
-    public Map updateByCode(SqlFragment fragment){
+    public Map updateByCode(SqlFragment fragment) {
         Map map = new HashMap();
+        if (null == fragment || null == fragment.getCode()) {
+            map.put("msg", "code不能为空");
+            map.put("success", false);
+            return map;
+        }
         map.put("success", sqlFragmentService.updateByCodeRetBool(fragment));
         map.put("msg", "");
         return map;
