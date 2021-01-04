@@ -20,10 +20,10 @@ public interface SqlFragmentMapper {
 
     List<SqlFragment> list();
 
-    @Select("select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment where code = #{code} ")
+    @Select("select id,name,code,sql_desc as sqlDesc,fragment,param_constraint as paramConstraint from sql_fragment where code = #{code} ")
     SqlFragment selectByCode(String code);
 
-    @Select("select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment where id = #{id} ")
+    @Select("select id,name,code,sql_desc as sqlDesc,fragment,param_constraint as paramConstraint from sql_fragment where id = #{id} ")
     SqlFragment selectById(Long id);
 
 }

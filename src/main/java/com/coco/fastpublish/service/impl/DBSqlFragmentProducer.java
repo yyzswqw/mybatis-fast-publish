@@ -1,10 +1,15 @@
 package com.coco.fastpublish.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.coco.fastpublish.entity.SqlFragment;
 import com.coco.fastpublish.service.SqlFragmentProducer;
 import com.coco.fastpublish.service.SqlFragmentService;
+import com.coco.fastpublish.util.CheckParamUtil;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 public class DBSqlFragmentProducer implements SqlFragmentProducer {
 
@@ -12,11 +17,24 @@ public class DBSqlFragmentProducer implements SqlFragmentProducer {
     private SqlFragmentService fragmentService;
 
     @Override
-    public String getSqlFragment(String sqlFragmentKey, String defaultSqlFragment) {
+    public String getSqlFragment(String sqlFragmentKey, String defaultSqlFragment, Object param, Map paramConstraint) {
+        Map paramMap = (Map) param;
         final SqlFragment sqlFragment = fragmentService.getByCode(sqlFragmentKey);
-        if(null == sqlFragment){
+        if (null == sqlFragment || sqlFragment.getFragment() == null) {
             return defaultSqlFragment;
         }
-        return sqlFragment.getFragment() == null?defaultSqlFragment:sqlFragment.getFragment();
+        if (sqlFragment.getParamConstraint() != null) {
+            PatriciaTrie constraintTrie = new PatriciaTrie();
+            Map constraintMap = JSON.parseObject(sqlFragment.getParamConstraint(), Map.class);
+            constraintTrie.putAll(constraintMap);
+            PatriciaTrie paramTrie = new PatriciaTrie();
+            paramTrie.putAll(paramMap);
+            paramConstraint.put("constraint", constraintMap);
+            StringBuilder stringBuilder = CheckParamUtil.checkParam(constraintTrie, paramTrie);
+            if (stringBuilder.length() > 0) {
+                throw new RuntimeException(stringBuilder.toString());
+            }
+        }
+        return sqlFragment.getFragment();
     }
 }

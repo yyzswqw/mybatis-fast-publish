@@ -34,6 +34,11 @@ public class SqlFragment implements Serializable {
      */
     private String fragment;
 
+    /**
+     * 参数约束，json串
+     */
+    private String paramConstraint;
+
     public Long getId() {
         return id;
     }
@@ -74,6 +79,14 @@ public class SqlFragment implements Serializable {
         this.fragment = fragment;
     }
 
+    public String getParamConstraint() {
+        return paramConstraint;
+    }
+
+    public void setParamConstraint(String paramConstraint) {
+        this.paramConstraint = paramConstraint;
+    }
+
     @Override
     public String toString() {
         return "SqlFragment{" +
@@ -82,6 +95,7 @@ public class SqlFragment implements Serializable {
                 ", code='" + code + '\'' +
                 ", sqlDesc='" + sqlDesc + '\'' +
                 ", fragment='" + fragment + '\'' +
+                ", paramConstraint='" + paramConstraint + '\'' +
                 '}';
     }
 }

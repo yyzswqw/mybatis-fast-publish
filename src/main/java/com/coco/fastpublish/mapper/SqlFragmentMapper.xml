@@ -10,6 +10,7 @@
             <if test="fragment.code != null and fragment.code != ''">code,</if>
             <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc,</if>
             <if test="fragment.fragment != null and fragment.fragment != ''">fragment,</if>
+            <if test="fragment.paramConstraint != null and fragment.paramConstraint != ''">param_constraint,</if>
         </trim>
         <trim prefix=' values(' suffix=') ' suffixOverrides=','>
             <if test="fragment.id != null and fragment.id != ''">#{fragment.id},</if>
@@ -17,6 +18,7 @@
             <if test="fragment.code != null and fragment.code != ''">#{fragment.code},</if>
             <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">#{fragment.sqlDesc},</if>
             <if test="fragment.fragment != null and fragment.fragment != ''">#{fragment.fragment},</if>
+            <if test="fragment.paramConstraint != null and fragment.paramConstraint != ''">#{fragment.paramConstraint},</if>
         </trim>
     </insert>
 
@@ -27,6 +29,7 @@
             <if test="fragment.code != null and fragment.code != ''">code=#{fragment.code},</if>
             <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc=#{fragment.sqlDesc},</if>
             <if test="fragment.fragment != null and fragment.fragment != ''">fragment=#{fragment.fragment},</if>
+            <if test="fragment.paramConstraint != null and fragment.paramConstraint != ''">param_constraint=#{fragment.paramConstraint},</if>
         </trim>
         where id = #{fragment.id}
     </update>
@@ -38,6 +41,7 @@
             <if test="fragment.name != null and fragment.name != ''">name=#{fragment.name},</if>
             <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''">sql_desc=#{fragment.sqlDesc},</if>
             <if test="fragment.fragment != null and fragment.fragment != ''">fragment=#{fragment.fragment},</if>
+            <if test="fragment.paramConstraint != null and fragment.paramConstraint != ''">param_constraint=#{fragment.paramConstraint},</if>
         </trim>
         where code = #{fragment.code}
     </update>
@@ -50,16 +54,17 @@
             <if test="fragment.code != null and fragment.code != ''"> and code=#{fragment.code}</if>
             <if test="fragment.sqlDesc != null and fragment.sqlDesc != ''"> and sql_desc=#{fragment.sqlDesc}</if>
             <if test="fragment.fragment != null and fragment.fragment != ''"> and fragment=#{fragment.fragment}</if>
+            <if test="fragment.paramConstraint != null and fragment.paramConstraint != ''"> and param_constraint=#{fragment.paramConstraint}</if>
         </where>
     </delete>
 
     <select id="list" resultType="com.coco.fastpublish.entity.SqlFragment">
-        select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment
+        select id,name,code,sql_desc as sqlDesc,fragment,param_constraint as paramConstraint from sql_fragment
     </select>
 
     <select id="listByPage" parameterType="map" resultType="com.coco.fastpublish.entity.SqlFragment">
         <if test="driverType != null and driverType == 'mysql'">
-            select id,name,code,sql_desc as sqlDesc,fragment from sql_fragment limit #{start},#{pageSize}
+            select id,name,code,sql_desc as sqlDesc,fragment,param_constraint as paramConstraint from sql_fragment limit #{start},#{pageSize}
         </if>
         <if test="driverType != null and driverType == 'oracle'">
             select id,name,code,sqlDesc,fragment from (

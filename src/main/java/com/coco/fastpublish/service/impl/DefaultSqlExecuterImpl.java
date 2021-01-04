@@ -1,13 +1,17 @@
 package com.coco.fastpublish.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.coco.fastpublish.mapper.BaseSqlExecuterMapper;
 import com.coco.fastpublish.service.SqlExecuter;
 import com.coco.fastpublish.service.SqlFragmentProducer;
 import com.coco.fastpublish.sqlprovider.BaseSqlExecuterProvider;
+import com.coco.fastpublish.util.CheckParamUtil;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.ibatis.mapping.BoundSql;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.ref.SoftReference;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultSqlExecuterImpl implements SqlExecuter {
 
     private static Map<String, SoftReference<String>> sqlFragmentMap = new ConcurrentHashMap<>();
+    private static Map<String, SoftReference<Map>> paramConstraintMap = new ConcurrentHashMap<>();
     private static Map<String, SoftReference<BoundSql>> boundSqlMap = new ConcurrentHashMap<>();
 
     @Autowired
@@ -24,22 +29,39 @@ public class DefaultSqlExecuterImpl implements SqlExecuter {
     private SqlFragmentProducer sqlFragmentProducer;
 
     @Override
-    public String getSqlFragment(String sqlFragmentKey,String defaultSqlFragment) {
+    public String getSqlFragment(String sqlFragmentKey, String defaultSqlFragment, Object param) {
+        if (!(param instanceof Map)) {
+            param = CheckParamUtil.objectToMap(param);
+        }
         final SoftReference<String> sqlFragment = sqlFragmentMap.get(sqlFragmentKey);
-        if(null == sqlFragment){
-            String sql = sqlFragmentProducer.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
-            if(null == sql){
+        if (null == sqlFragment) {
+            Map paramConstraint = new HashMap();
+            String sql = sqlFragmentProducer.getSqlFragment(sqlFragmentKey, defaultSqlFragment, param, paramConstraint);
+            if (null == sql) {
+                Map constraint = (Map) paramConstraint.get("constraint");
+                if (constraint != null && !constraint.isEmpty()) {
+                    paramConstraintMap.put(sqlFragmentKey, new SoftReference<>(constraint));
+                }
                 return defaultSqlFragment;
             }
-            sqlFragmentMap.put(sqlFragmentKey,new SoftReference<>(sql));
+            sqlFragmentMap.put(sqlFragmentKey, new SoftReference<>(sql));
             return sqlFragmentMap.get(sqlFragmentKey).get();
+        }
+        PatriciaTrie constraintTrie = new PatriciaTrie();
+        Map map = paramConstraintMap.get(sqlFragmentKey) == null ? null : paramConstraintMap.get(sqlFragmentKey).get();
+        constraintTrie.putAll(map);
+        PatriciaTrie paramTrie = new PatriciaTrie();
+        paramTrie.putAll((Map) param);
+        StringBuilder stringBuilder = CheckParamUtil.checkParam(constraintTrie, paramTrie);
+        if (stringBuilder.length() > 0) {
+            throw new RuntimeException(stringBuilder.toString());
         }
         return sqlFragment.get();
     }
 
     @Override
     public List<Map> executeSelect(String sqlFragmentKey, Map paramMap, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, paramMap);
         setBoundSql(sqlFragmentKey,paramMap,sql);
         return sqlExecuterMapper.executeSelect(paramMap,sql);
     }
@@ -65,28 +87,28 @@ public class DefaultSqlExecuterImpl implements SqlExecuter {
 
     @Override
     public int executeUpdate(String sqlFragmentKey, Map paramMap, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, paramMap);
         setBoundSql(sqlFragmentKey,paramMap,sql);
         return sqlExecuterMapper.executeUpdate(paramMap,sql);
     }
 
     @Override
     public boolean executeUpdateRetBool(String sqlFragmentKey, Map paramMap, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, paramMap);
         setBoundSql(sqlFragmentKey,paramMap,sql);
         return sqlExecuterMapper.executeUpdateRetBool(paramMap,sql);
     }
 
     @Override
     public int executeDelete(String sqlFragmentKey, Map paramMap, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, paramMap);
         setBoundSql(sqlFragmentKey,paramMap,sql);
         return sqlExecuterMapper.executeDelete(paramMap,sql);
     }
 
     @Override
     public boolean executeDeleteRetBool(String sqlFragmentKey, Map paramMap, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, paramMap);
         setBoundSql(sqlFragmentKey,paramMap,sql);
         return sqlExecuterMapper.executeDeleteRetBool(paramMap,sql);
     }
@@ -94,21 +116,21 @@ public class DefaultSqlExecuterImpl implements SqlExecuter {
 
     @Override
     public boolean executeRetBool(String sqlFragmentKey, Object param, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, param);
         setBoundSql(sqlFragmentKey,param,sql);
         return sqlExecuterMapper.executeRetBool(param,sql);
     }
 
     @Override
     public List<Map> executeSelectByBean(String sqlFragmentKey,Object param, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, param);
         setBoundSql(sqlFragmentKey,param,sql);
         return sqlExecuterMapper.executeSelectByBean(param, sql);
     }
 
     @Override
     public boolean simpleExecuteRetBool(String sqlFragmentKey, Object param, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, param);
         setBoundSql(sqlFragmentKey,param,sql);
         return sqlExecuterMapper.simpleExecuteRetBool(param,sql);
     }
@@ -116,7 +138,7 @@ public class DefaultSqlExecuterImpl implements SqlExecuter {
 
     @Override
     public int execute(String sqlFragmentKey, Object param, String defaultSqlFragment) {
-        final String sql = this.getSqlFragment(sqlFragmentKey,defaultSqlFragment);
+        final String sql = this.getSqlFragment(sqlFragmentKey, defaultSqlFragment, param);
         setBoundSql(sqlFragmentKey,param,sql);
         return sqlExecuterMapper.execute(param,sql);
     }

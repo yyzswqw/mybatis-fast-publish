@@ -7,11 +7,12 @@ public interface SqlExecuter {
 
     /**
      * 获取sql片段
-     * @param sqlFragmentKey 缓存key
+     *
+     * @param sqlFragmentKey     缓存key
      * @param defaultSqlFragment 默认sql片段
      * @return sql片段
      */
-    default String getSqlFragment(String sqlFragmentKey,String defaultSqlFragment){
+    default String getSqlFragment(String sqlFragmentKey, String defaultSqlFragment, Object param) {
         return defaultSqlFragment;
     }
 
