@@ -2,6 +2,7 @@ package com.coco.fastpublish.util;
 
 import cn.hutool.core.bean.BeanUtil;
 import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +20,12 @@ public class CheckParamUtil {
      */
     public static StringBuilder checkParam(Trie<String, Object> baseTrie, Trie<String, Object> trie) {
         StringBuilder sb = new StringBuilder();
+        if (baseTrie == null || baseTrie.isEmpty()) {
+            return sb;
+        }
+        if (trie == null) {
+            trie = new PatriciaTrie();
+        }
         final Iterator<String> iterator = baseTrie.keySet().iterator();
         while (iterator.hasNext()) {
             String path = null;

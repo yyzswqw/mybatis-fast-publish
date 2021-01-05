@@ -19,7 +19,7 @@ public class DBSqlFragmentProducer implements SqlFragmentProducer {
     @Override
     public String getSqlFragment(String sqlFragmentKey, String defaultSqlFragment, Object param, Map paramConstraint) {
         Map paramMap = (Map) param;
-        final SqlFragment sqlFragment = fragmentService.getByCode(sqlFragmentKey);
+        SqlFragment sqlFragment = fragmentService.getByCode(sqlFragmentKey);
         if (null == sqlFragment || sqlFragment.getFragment() == null) {
             return defaultSqlFragment;
         }
@@ -36,5 +36,14 @@ public class DBSqlFragmentProducer implements SqlFragmentProducer {
             }
         }
         return sqlFragment.getFragment();
+    }
+
+    @Override
+    public String getParamConstraint(String sqlFragmentKey) {
+        SqlFragment sqlFragment = fragmentService.getByCode(sqlFragmentKey);
+        if (sqlFragment == null || sqlFragment.getParamConstraint() == null) {
+            return null;
+        }
+        return sqlFragment.getParamConstraint();
     }
 }

@@ -1,6 +1,7 @@
 package com.coco.fastpublish.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.coco.fastpublish.mapper.BaseSqlExecuterMapper;
 import com.coco.fastpublish.service.SqlExecuter;
 import com.coco.fastpublish.service.SqlFragmentProducer;
@@ -49,6 +50,14 @@ public class DefaultSqlExecuterImpl implements SqlExecuter {
         }
         PatriciaTrie constraintTrie = new PatriciaTrie();
         Map map = paramConstraintMap.get(sqlFragmentKey) == null ? null : paramConstraintMap.get(sqlFragmentKey).get();
+        if (map == null || map.isEmpty()) {
+            String paramConstraint = sqlFragmentProducer.getParamConstraint(sqlFragmentKey);
+            if (paramConstraint != null) {
+                map = JSON.parseObject(paramConstraint, Map.class);
+            } else {
+                map = new HashMap();
+            }
+        }
         constraintTrie.putAll(map);
         PatriciaTrie paramTrie = new PatriciaTrie();
         paramTrie.putAll((Map) param);

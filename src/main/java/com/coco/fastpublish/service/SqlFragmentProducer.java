@@ -19,10 +19,22 @@ public interface SqlFragmentProducer {
 
     /**
      * 获取sql片段
+     *
      * @param sqlFragmentKey 缓存key
      * @return sql片段
      */
     default String getSqlFragment(String sqlFragmentKey) {
-        return this.getSqlFragment(sqlFragmentKey,null,null,null);
+        return this.getSqlFragment(sqlFragmentKey, null, null, null);
     }
+
+    /**
+     * 获取参数约束
+     *
+     * @param sqlFragmentKey 缓存key
+     * @return 参数约束
+     */
+    default String getParamConstraint(String sqlFragmentKey) {
+        return null;
+    }
+
 }
